@@ -1,9 +1,13 @@
 import { performance } from "node:perf_hooks";
 
 import { cassidyCluster } from "../src/cassidyCluster.js";
+import { cassidyClusterRuns } from "../src/cassidyClusterRuns.js";
 import { countingSortCluster } from "../src/countingSortCluster.js";
 
-const TILE_VALUES = ["b", "g", "o", "r"];
+const ALPHABETS = {
+	"4 (tiles: b g o r)": ["b", "g", "o", "r"],
+	"26 (a-z)": "abcdefghijklmnopqrstuvwxyz".split(""),
+};
 const SIZES = [1_000, 10_000, 100_000];
 
 function seededRandom(seed) {
@@ -14,12 +18,12 @@ function seededRandom(seed) {
 	};
 }
 
-function randomTileString(length, seed) {
+function randomString(length, alphabet, seed) {
 	const random = seededRandom(seed);
 	let result = "";
 
 	for (let index = 0; index < length; index++) {
-		result += TILE_VALUES[Math.floor(random() * TILE_VALUES.length)];
+		result += alphabet[Math.floor(random() * alphabet.length)];
 	}
 
 	return result;
@@ -33,19 +37,24 @@ function time(label, input, fn) {
 	return { label, duration };
 }
 
-const rows = SIZES.flatMap((size) => {
-	const input = randomTileString(size, size);
+for (const [alphabetLabel, alphabet] of Object.entries(ALPHABETS)) {
+	console.log(`\nAlphabet size ${alphabetLabel}`);
 
-	return [
-		{ n: size, ...time("cassidyCluster", input, cassidyCluster) },
-		{ n: size, ...time("countingSort", input, countingSortCluster) },
-	];
-});
+	const rows = SIZES.flatMap((size) => {
+		const input = randomString(size, alphabet, size);
 
-console.table(
-	rows.map(({ n, label, duration }) => ({
-		n,
-		algorithm: label,
-		"duration (ms)": duration.toFixed(3),
-	})),
-);
+		return [
+			{ n: size, ...time("cassidyCluster (array)", input, cassidyCluster) },
+			{ n: size, ...time("cassidyClusterRuns (RLE)", input, cassidyClusterRuns) },
+			{ n: size, ...time("countingSortCluster", input, countingSortCluster) },
+		];
+	});
+
+	console.table(
+		rows.map(({ n, label, duration }) => ({
+			n,
+			algorithm: label,
+			"duration (ms)": duration.toFixed(3),
+		})),
+	);
+}
