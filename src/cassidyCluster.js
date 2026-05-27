@@ -1,3 +1,10 @@
+// `cassidyCluster` algorithm and reference implementation © 2026 Cassidy
+// Williams. Source: https://cassidoo.co/post/clustering-tiles/
+//
+// Function body is preserved verbatim from the post so the algorithm reads
+// exactly as published. The RLE/linked-list variant lives in
+// `cassidyClusterRuns.js`.
+
 function cassidyCluster(input) {
 	// It's more "proper" to input an actual array here
 	// but this is for accepting a string as well
