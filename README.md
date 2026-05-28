@@ -11,6 +11,10 @@ the same heuristic gets when you change the representation but not the moves.
 
 > "It's not the most efficient, but it's very interesting." — Cassidy
 
+## Walkthrough
+
+[![Watch the walkthrough on YouTube](https://img.youtube.com/vi/l6bEeP42a2c/maxresdefault.jpg)](https://www.youtube.com/watch?v=l6bEeP42a2c)
+
 ## What's in here
 
 - `src/cassidyCluster.js` — Cassidy's function, verbatim from the post.
